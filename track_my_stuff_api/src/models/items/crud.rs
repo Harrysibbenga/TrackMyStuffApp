@@ -10,11 +10,13 @@ pub fn create_item(
     name: &str,
     description: Option<&str>,
     expected_arrival_date: NaiveDateTime,
+    item_received: Option<bool>,
 ) -> Result<Item, Error> {
     let new_item = NewItem {
         name,
         description,
         expected_arrival_date,
+        item_received: item_received.unwrap_or(false),
     };
 
     diesel::insert_into(items::table)

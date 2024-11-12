@@ -10,6 +10,7 @@ fn main() {
         Ok(_connection) => {
             // Use the connection
             println!("Connected to the database!");
+            println!("Database URL: {}", database_url);
         }
         Err(error) => {
             eprintln!("Error connecting to the database: {}", error);
