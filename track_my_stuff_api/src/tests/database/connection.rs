@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod tests {
+mod connection_tests {
     use crate::database;
     use dotenv::dotenv;
     use std::env;

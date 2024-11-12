@@ -19,3 +19,12 @@ pub struct NewItem<'a> {
     pub description: Option<&'a str>,
     pub expected_arrival_date: NaiveDateTime,
 }
+
+#[derive(AsChangeset)]
+#[diesel(table_name = items)]
+pub struct UpdateItem {
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub expected_arrival_date: Option<NaiveDateTime>,
+    pub received: Option<bool>,
+}

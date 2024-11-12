@@ -1,8 +1,30 @@
 #[cfg(test)]
-mod tests {
-    use crate::database;
+mod item_model_tests {
+    use crate::models;
     use chrono::NaiveDateTime;
-    use database::models::{Item, NewItem};
+    use models::items::models::{Item, NewItem, UpdateItem};
+
+    #[test]
+    #[allow(deprecated)]
+    fn test_update_item() {
+        let update_item = UpdateItem {
+            name: Some(String::from("Updated Test Item")),
+            description: Some(String::from("This is an updated test item")),
+            expected_arrival_date: Some(NaiveDateTime::from_timestamp(1_632_112_000, 0)),
+            received: Some(true),
+        };
+
+        assert_eq!(update_item.name, Some(String::from("Updated Test Item")));
+        assert_eq!(
+            update_item.description,
+            Some(String::from("This is an updated test item"))
+        );
+        assert_eq!(
+            update_item.expected_arrival_date,
+            Some(NaiveDateTime::from_timestamp(1_632_112_000, 0))
+        );
+        assert_eq!(update_item.received, Some(true));
+    }
 
     #[test]
     #[allow(deprecated)]
