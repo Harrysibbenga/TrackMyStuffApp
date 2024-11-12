@@ -9,7 +9,7 @@ pub struct Item {
     pub name: String,
     pub description: Option<String>,
     pub expected_arrival_date: NaiveDateTime,
-    pub received: bool,
+    pub item_received: bool,
 }
 
 #[derive(Insertable, Debug)]
@@ -18,4 +18,14 @@ pub struct NewItem<'a> {
     pub name: &'a str,
     pub description: Option<&'a str>,
     pub expected_arrival_date: NaiveDateTime,
+    pub item_received: bool,
+}
+
+#[derive(AsChangeset)]
+#[diesel(table_name = items)]
+pub struct UpdateItem {
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub expected_arrival_date: Option<NaiveDateTime>,
+    pub item_received: Option<bool>,
 }

@@ -4,6 +4,6 @@ diesel::table! {
         name -> Varchar,
         description -> Nullable<Text>,
         expected_arrival_date -> Timestamp,
-        received -> Bool,
+        item_received -> Bool,
     }
 }
