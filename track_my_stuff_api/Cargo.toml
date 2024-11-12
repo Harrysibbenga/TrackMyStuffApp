@@ -1,0 +1,10 @@
+[package]
+name = "track_my_stuff_api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+diesel = { version = "2.0", features = ["postgres"] }
+dotenv = "0.15"
+thiserror = "1.0"
+
