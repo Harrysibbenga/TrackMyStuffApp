@@ -1,2 +1,2 @@
-mod database;
-mod tests;
+pub mod database;
+pub mod tests;

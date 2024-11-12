@@ -6,7 +6,7 @@ fn main() {
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    match database::establish_connection(&database_url) {
+    match database::connection::establish_connection(&database_url) {
         Ok(_connection) => {
             // Use the connection
             println!("Connected to the database!");

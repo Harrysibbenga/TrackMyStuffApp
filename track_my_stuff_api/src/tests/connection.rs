@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::database;
     use dotenv::dotenv;
     use std::env;
@@ -15,7 +14,7 @@ mod tests {
 
         let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-        match database::establish_connection(&database_url) {
+        match database::connection::establish_connection(&database_url) {
             Ok(_connection) => {
                 // Connection should be successful
                 assert!(true);
@@ -33,7 +32,7 @@ mod tests {
 
         env::set_var("TEST_URL", "invalid_database_url");
 
-        match database::establish_connection(&env::var("TEST_URL").unwrap()) {
+        match database::connection::establish_connection(&env::var("TEST_URL").unwrap()) {
             Ok(_connection) => {
                 // Connection should fail
                 assert!(
