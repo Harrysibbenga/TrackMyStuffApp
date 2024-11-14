@@ -18,5 +18,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build
       run: cargo build --verbose
+      working-directory: ./track_my_stuff_api  # Specify the working directory
     - name: Run tests
       run: cargo test --verbose
+      working-directory: ./track_my_stuff_api  # Specify the working directory
