@@ -12,7 +12,7 @@ mod item_model_tests {
     use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
     use dotenv::dotenv;
     use models::items::crud::{create_item, delete_item, get_item_by_id, get_items, update_item};
-    use models::items::models::{Item, NewItem, UpdateItem};
+    use models::items::models::{CreateItem, Item, UpdateItem};
 
     pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
 
@@ -39,18 +39,18 @@ mod item_model_tests {
     #[allow(deprecated)]
     fn test_create_item() {
         let connection = &mut establish_test_connection();
-        let name: &str = "Test Item";
-        let description: &str = "This is a test item";
+        let name: String = "Test Item".to_string();
+        let description: String = "This is a test item".to_string();
         let expected_arrival_date: NaiveDateTime = NaiveDateTime::from_timestamp(1_632_112_000, 0);
 
-        let item: Item = create_item(
-            connection,
-            name,
-            Some(description),
-            expected_arrival_date,
-            Some(false),
-        )
-        .unwrap();
+        let new_item: CreateItem = CreateItem {
+            name: name.clone(),
+            description: Some(description.clone()),
+            expected_arrival_date: Some(expected_arrival_date),
+            item_received: Some(false),
+        };
+
+        let item: Item = create_item(connection, new_item).unwrap();
 
         assert_eq!(item.name, name);
         assert_eq!(item.description, Some(String::from(description)));
@@ -129,20 +129,23 @@ mod item_model_tests {
 
     #[test]
     #[allow(deprecated)]
-    fn test_new_item_creation() {
-        let new_item = NewItem {
-            name: "New Test Item",
-            description: Some("This is a new test item"),
-            expected_arrival_date: NaiveDateTime::from_timestamp(1_632_112_000, 0),
-            item_received: false,
+    fn test_create_item_creation() {
+        let new_item = CreateItem {
+            name: "New Test Item".to_string(),
+            description: Some("This is a new test item".to_string()),
+            expected_arrival_date: Some(NaiveDateTime::from_timestamp(1_632_112_000, 0)),
+            item_received: Some(false),
         };
 
         assert_eq!(new_item.name, "New Test Item");
-        assert_eq!(new_item.description, Some("This is a new test item"));
+        assert_eq!(
+            new_item.description,
+            Some("This is a new test item".to_string())
+        );
         assert_eq!(
             new_item.expected_arrival_date,
-            NaiveDateTime::from_timestamp(1_632_112_000, 0)
+            Some(NaiveDateTime::from_timestamp(1_632_112_000, 0))
         );
-        assert_eq!(new_item.item_received, false);
+        assert_eq!(new_item.item_received, Some(false));
     }
 }

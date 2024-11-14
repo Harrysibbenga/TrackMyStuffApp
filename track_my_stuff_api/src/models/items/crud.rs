@@ -1,22 +1,18 @@
-use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use diesel::result::Error;
 
-use super::models::{Item, NewItem, UpdateItem};
+use super::models::{CreateItem, Item, UpdateItem};
 use super::schema::items;
 
 pub fn create_item(
     connection: &mut PgConnection,
-    name: &str,
-    description: Option<&str>,
-    expected_arrival_date: NaiveDateTime,
-    item_received: Option<bool>,
-) -> Result<Item, Error> {
-    let new_item = NewItem {
-        name,
-        description,
-        expected_arrival_date,
-        item_received: item_received.unwrap_or(false),
+    item_data: CreateItem,
+) -> Result<Item, diesel::result::Error> {
+    let new_item = CreateItem {
+        name: item_data.name,
+        description: item_data.description,
+        expected_arrival_date: item_data.expected_arrival_date,
+        item_received: item_data.item_received,
     };
 
     diesel::insert_into(items::table)
@@ -44,6 +40,5 @@ pub fn update_item(
 
 pub fn delete_item(connection: &mut PgConnection, item_id: i32) -> Result<(), Error> {
     diesel::delete(items::table.find(item_id)).execute(connection)?;
-
     Ok(())
 }
