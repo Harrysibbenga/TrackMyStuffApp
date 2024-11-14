@@ -1,5 +1,5 @@
 use diesel::{prelude::*, ConnectionError, PgConnection};
-use thiserror::Error; // For the custom error type
+use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum DatabaseError {

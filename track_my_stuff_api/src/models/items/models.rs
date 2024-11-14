@@ -3,7 +3,7 @@ use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Debug, Deserialize, Serialize)]
+#[derive(Queryable, Debug, Serialize, Deserialize)]
 pub struct Item {
     pub id: i32,
     pub name: String,
@@ -12,16 +12,21 @@ pub struct Item {
     pub item_received: bool,
 }
 
-#[derive(Insertable, Debug)]
-#[diesel(table_name = items)]
-pub struct NewItem<'a> {
-    pub name: &'a str,
-    pub description: Option<&'a str>,
-    pub expected_arrival_date: NaiveDateTime,
-    pub item_received: bool,
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ItemData {
+    name: String,
 }
 
-#[derive(AsChangeset)]
+#[derive(Debug, Deserialize, Serialize, Insertable)]
+#[diesel(table_name = items)]
+pub struct CreateItem {
+    pub name: String,
+    pub description: Option<String>,
+    pub expected_arrival_date: Option<NaiveDateTime>,
+    pub item_received: Option<bool>,
+}
+
+#[derive(AsChangeset, Debug, Deserialize, Serialize)]
 #[diesel(table_name = items)]
 pub struct UpdateItem {
     pub name: Option<String>,
