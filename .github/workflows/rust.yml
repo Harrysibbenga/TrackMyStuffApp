@@ -77,5 +77,5 @@ jobs:
 
             ${{ steps.changelog.outputs.changelog_url }}
 
-          branch: "testing-to-staging" # The name of the new branch
+          branch: "testing" # The name of the branch
           base: "staging" # The target branch for the pull request
