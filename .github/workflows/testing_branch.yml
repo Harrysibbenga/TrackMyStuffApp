@@ -68,5 +68,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           title: Automatic pull request
           body: Automatic pull request from testing branch
-          branch: testing
-          base: staging
+          source_branch: testing
+          target_branch: staging
