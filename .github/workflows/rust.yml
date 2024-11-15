@@ -39,7 +39,7 @@ jobs:
     - name: Setup Diesel CLI
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: nightly-2024-11-08
+        toolchain: nightly-2024-11-14
         override: true
         components: diesel_cli
         
