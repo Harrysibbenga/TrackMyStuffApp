@@ -8,68 +8,59 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
+  DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
 
 jobs:
   build-and-test:
-
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Create Superuser 
-      run: |
-        sudo useradd -m -d /home/${{ secrets.POSTGRES_USER }} -s /bin/bash ${{ secrets.POSTGRES_USER }}
-        echo '${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}' | sudo chpasswd
-        sudo adduser ${{ secrets.POSTGRES_USER }} sudo
+      - uses: actions/checkout@v4
+      - name: Create Superuser 
+        run: |
+          sudo useradd -m -d /home/${{ secrets.POSTGRES_USER }} -s /bin/bash ${{ secrets.POSTGRES_USER }}
+          echo '${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}' | sudo chpasswd
+          sudo adduser ${{ secrets.POSTGRES_USER }} sudo
+          
+      - name: Checkout Test Code
+        uses: actions/checkout@v3
+        with:
+          repository: Harrysibbenga/TrackMyStuffApp
+          ref: testing
+          path: TrackMyStuffApp
+          
+      - name: Install nightly toolchain
+        run: |
+          rustup toolchain install nightly
+          rustup default nightly
+          rustup update
+          
+      - name: Install Diesel CLI
+        run: |
+          cargo install diesel_cli --no-default-features --features postgres
+        working-directory: ./TrackMyStuffApp/track_my_stuff_api
         
-    - name: Checkout Test Code
-      uses: actions/checkout@v3
-      with:
-        repository: Harrysibbenga/TrackMyStuffApp
-        ref: testing
-        path: TrackMyStuffApp
+      - name: Setup PostgreSQL
+        uses: shogo82148/actions-setup-postgresql@v1
+        with:
+          postgresql-version: 'latest'
+          database: ${{ secrets.POSTGRES_DB }}
+          user: ${{ secrets.POSTGRES_USER }}
+          password: ${{ secrets.POSTGRES_PASSWORD }}
+        id: postgres
+      - run: psql ${{ steps.postgres.outputs.connection-uri }} -c "SELECT 1"
+      - run: psql service=${{ steps.postgres.outputs.service-name }} -c "SELECT 1"
+      - run: psql -c "SELECT 1"
+        env:
+          PGSERVICE: ${{ steps.postgres.outputs.service-name }}
+          
+      - name: Build
+        run: cargo build --verbose
+        working-directory: ./TrackMyStuffApp/track_my_stuff_api
         
-    - name: Install nightly toolchain
-      run: |
-        rustup toolchain install nightly
-        rustup default nightly
-        rustup update
-    
-    - name: Install Diesel CLI
-      run: |
-        cargo install diesel_cli --no-default-features --features postgres
-      working-directory: ./TrackMyStuffApp/track_my_stuff_api
-    
-    - name: Build
-      run: cargo build --verbose
-      working-directory: ./TrackMyStuffApp/track_my_stuff_api
-    
-    - name: Create Database
-      run: |
-        sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
-        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};"
-      working-directory: ./TrackMyStuffApp
-    
-    - name: Run Diesel Migrations
-      run: diesel migration run
-      working-directory: ./TrackMyStuffApp/track_my_stuff_api
-    
-    - name: Run tests
-      run: cargo test --verbose
-      working-directory: ./TrackMyStuffApp/track_my_stuff_api
+      - name: Run Diesel Migrations
+        run: diesel migration run
+        working-directory: ./TrackMyStuffApp/track_my_stuff_api
+        
+      - name: Run tests
+        run: cargo test --verbose
+        working-directory: ./TrackMyStuffApp/track_my_stuff_api
