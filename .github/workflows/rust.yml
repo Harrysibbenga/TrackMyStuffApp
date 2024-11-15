@@ -32,6 +32,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Create Superuser 
+      run: |
+        sudo useradd -m -d /home/${{ secrets.POSTGRES_USER }} -s /bin/bash ${{ secrets.POSTGRES_USER }}
+        echo '${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}' | sudo chpasswd
+        sudo adduser ${{ secrets.POSTGRES_USER }} sudo
+        
+    - name: Checkout Test Code
+      uses: actions/checkout@v3
+      with:
+        repository: Harrysibbenga/TrackMyStuffApp
+        ref: testing
+        path: TrackMyStuffApp
+        
+    - name: Change Working Directory
+      run: |
+        cd TrackMyStuffApp/track_my_stuff_api
+        
     - name: Install nightly toolchain
       run: |
         rustup toolchain install nightly
@@ -41,20 +58,17 @@ jobs:
     - name: Install Diesel CLI
       run: |
         cargo install diesel_cli --no-default-features --features postgres
+        
     - name: Build
       run: cargo build --verbose
-      working-directory: ./track_my_stuff_api
       
     - name: Create Database
       run: |
         sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
-        sudo -u postgres psql -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
         sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};"
-      working-directory: ./track_my_stuff_api
-      
+        
     - name: Run Diesel Migrations
       run: diesel migration run
-      working-directory: ./track_my_stuff_api
+      
     - name: Run tests
       run: cargo test --verbose
-      working-directory: ./track_my_stuff_api
