@@ -47,7 +47,6 @@ jobs:
           database: ${{ secrets.POSTGRES_DB }}
           user: ${{ secrets.POSTGRES_USER }}
           password: ${{ secrets.POSTGRES_PASSWORD }}
-        id: postgres
         
       - name: Build
         run: cargo build --verbose
