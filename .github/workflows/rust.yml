@@ -36,7 +36,6 @@ jobs:
       run: |
         rustup toolchain install nightly
         rustup toolchain default nightly
-        rustup update
     - name: Install Diesel CLI
       run: |
         cargo install diesel_cli --no-default-features --features postgres
