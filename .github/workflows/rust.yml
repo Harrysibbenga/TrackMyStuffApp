@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Create Superuser 
         run: |
           sudo useradd -m -d /home/${{ secrets.POSTGRES_USER }} -s /bin/bash ${{ secrets.POSTGRES_USER }}
@@ -47,12 +48,7 @@ jobs:
           user: ${{ secrets.POSTGRES_USER }}
           password: ${{ secrets.POSTGRES_PASSWORD }}
         id: postgres
-      - run: psql ${{ steps.postgres.outputs.connection-uri }} -c "SELECT 1"
-      - run: psql service=${{ steps.postgres.outputs.service-name }} -c "SELECT 1"
-      - run: psql -c "SELECT 1"
-        env:
-          PGSERVICE: ${{ steps.postgres.outputs.service-name }}
-          
+        
       - name: Build
         run: cargo build --verbose
         working-directory: ./TrackMyStuffApp/track_my_stuff_api
