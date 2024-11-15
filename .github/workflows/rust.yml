@@ -39,22 +39,17 @@ jobs:
     - name: Install Diesel CLI
       run: |
         cargo install diesel_cli --no-default-features --features postgres
-
-    - uses: actions/checkout@v4
     - name: Build
       run: cargo build --verbose
       working-directory: ./track_my_stuff_api
-        
     - name: Create Database
       run: |
         sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
         sudo -u postgres psql -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
         sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};"
-        
     - name: Run Diesel Migrations
       run: diesel migration run
       working-directory: ./track_my_stuff_api
-      
     - name: Run tests
       run: cargo test --verbose
       working-directory: ./track_my_stuff_api
