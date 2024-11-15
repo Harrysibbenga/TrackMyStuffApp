@@ -45,11 +45,11 @@ jobs:
         uses: ikalnytskyi/action-setup-postgres@v7
         with:
           postgres-version: '16'
-          database: track_my_stuff_test
-          user: track_my_stuff_user
+          database: ${{ secrets.POSTGRES_DB }}
+          user: ${{ secrets.POSTGRES_USER }}
           password: ${{ secrets.POSTGRES_PASSWORD }}
           port: 5432
-          ssl: true
+          ssl: false
           
       - name: Build
         run: cargo build --verbose
