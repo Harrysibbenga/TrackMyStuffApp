@@ -3,7 +3,9 @@ name: Rust CI/CD
 
 on:
   push:
-    branches-ignore: ["main", "staging"]
+    branches: [ "testing" ]  # Trigger on pushes to the testing branch
+  pull_request:
+    branches: [ "staging" ]
 
 env:
   CARGO_TERM_COLOR: always
