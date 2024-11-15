@@ -1,16 +1,17 @@
-name: Rust
+name: Rust CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "testing" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "staging" ]
 
 env:
   CARGO_TERM_COLOR: always
+  DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
@@ -18,9 +19,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: track_my_stuff_test
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5432:5432
         options: >-
@@ -34,20 +35,24 @@ jobs:
     - name: Build
       run: cargo build --verbose
       working-directory: ./track_my_stuff_api
+      
     - name: Setup Diesel CLI
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         override: true
         components: diesel_cli
+        
+    - name: Create Database
+      run: |
+        sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
+        sudo -u postgres psql -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
+        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};"
+        
     - name: Run Diesel Migrations
       run: diesel migration run
       working-directory: ./track_my_stuff_api
-      env:
-        DATABASE_URL: postgres://postgres:password@localhost:5432/track_my_stuff_test
+      
     - name: Run tests
       run: cargo test --verbose
       working-directory: ./track_my_stuff_api
-      env:
-        DATABASE_URL: postgres://postgres:password@localhost:5432/track_my_stuff_test
-        TEST_DATABASE_URL: postgres://postgres:password@localhost:5432/track_my_stuff_test
