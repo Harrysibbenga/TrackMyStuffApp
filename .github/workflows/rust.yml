@@ -64,7 +64,7 @@ jobs:
       run: |
         sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
         sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};"
-      working-directory: ./TrackMyStuffApp/track_my_stuff_api
+      working-directory: ./TrackMyStuffApp
     
     - name: Run Diesel Migrations
       run: diesel migration run
