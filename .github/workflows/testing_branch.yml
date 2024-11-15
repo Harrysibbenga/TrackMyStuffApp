@@ -1,11 +1,9 @@
 # This is a GitHub Actions workflow file for Rust CI/CD
-name: Rust CI/CD
+name: Push Testing Branch - Rust CI/CD
 
 on:
   push:
-    branches: [ "testing" ]  # Trigger on pushes to the testing branch
-  pull_request:
-    branches: [ "staging" ]
+    branches: ["testing"]
 
 env:
   CARGO_TERM_COLOR: always

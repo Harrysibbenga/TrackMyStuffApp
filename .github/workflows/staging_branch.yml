@@ -1,5 +1,5 @@
 # This is a GitHub Actions workflow file for Rust CI/CD
-name: Rust CI/CD
+name: Push Staging Branch - Rust CI/CD
 
 on:
   push:
