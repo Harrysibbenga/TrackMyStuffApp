@@ -45,18 +45,11 @@ jobs:
         uses: ikalnytskyi/action-setup-postgres@v7
         with:
           postgres-version: '16'
-          database: ${{ secrets.POSTGRES_DB }}
-          user: ${{ secrets.POSTGRES_USER }}
+          database: track_my_stuff_test
+          user: track_my_stuff_user
           password: ${{ secrets.POSTGRES_PASSWORD }}
           port: 5432
           ssl: true
-        id: postgres
-
-      - run: psql ${{ steps.postgres.outputs.connection-uri }} -c "SELECT 1"
-      - run: psql service=${{ steps.postgres.outputs.service-name }} -c "SELECT 1"
-      - run: psql -c "SELECT 1"
-        env:
-          PGSERVICE: ${{ steps.postgres.outputs.service-name }}
           
       - name: Build
         run: cargo build --verbose
