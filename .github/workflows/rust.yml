@@ -2,9 +2,9 @@ name: Rust CI/CD
 
 on:
   push:
-    branches: [ "testing" ]
+    branches: ["testing"]
   pull_request:
-    branches: [ "staging" ]
+    branches: ["staging"]
 
 env:
   CARGO_TERM_COLOR: always
@@ -17,48 +17,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create Superuser 
+      - name: Create Superuser
         run: |
           sudo useradd -m -d /home/${{ secrets.POSTGRES_USER }} -s /bin/bash ${{ secrets.POSTGRES_USER }}
           echo '${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}' | sudo chpasswd
           sudo adduser ${{ secrets.POSTGRES_USER }} sudo
-          
+
       - name: Checkout Test Code
         uses: actions/checkout@v3
         with:
           repository: Harrysibbenga/TrackMyStuffApp
           ref: testing
           path: TrackMyStuffApp
-          
+
       - name: Install nightly toolchain
         run: |
           rustup toolchain install nightly
           rustup default nightly
           rustup update
-          
+
       - name: Install Diesel CLI
         run: |
           cargo install diesel_cli --no-default-features --features postgres
         working-directory: ./TrackMyStuffApp/track_my_stuff_api
-        
+
       - name: Setup PostgreSQL
         uses: ikalnytskyi/action-setup-postgres@v7
         with:
-          postgres-version: '16'
+          postgres-version: "16"
           database: ${{ secrets.POSTGRES_DB }}
           username: ${{ secrets.POSTGRES_USER }}
           password: ${{ secrets.POSTGRES_PASSWORD }}
           port: 5432
           ssl: true
-          
+
       - name: Build
         run: cargo build --verbose
         working-directory: ./TrackMyStuffApp/track_my_stuff_api
-        
+
       - name: Run Diesel Migrations
         run: diesel migration run
         working-directory: ./TrackMyStuffApp/track_my_stuff_api
-        
+
       - name: Run tests
         run: cargo test --verbose
         working-directory: ./TrackMyStuffApp/track_my_stuff_api
