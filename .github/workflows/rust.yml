@@ -45,30 +45,31 @@ jobs:
         ref: testing
         path: TrackMyStuffApp
         
-    - name: Change Working Directory
-      run: |
-        cd TrackMyStuffApp/track_my_stuff_api
-        
     - name: Install nightly toolchain
       run: |
         rustup toolchain install nightly
         rustup default nightly
         rustup update
-        
+    
     - name: Install Diesel CLI
       run: |
         cargo install diesel_cli --no-default-features --features postgres
-        
+      working-directory: ./TrackMyStuffApp/track_my_stuff_api
+    
     - name: Build
       run: cargo build --verbose
-      
+      working-directory: ./TrackMyStuffApp/track_my_stuff_api
+    
     - name: Create Database
       run: |
         sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.POSTGRES_DB }};"
         sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};"
-        
+      working-directory: ./TrackMyStuffApp/track_my_stuff_api
+    
     - name: Run Diesel Migrations
       run: diesel migration run
-      
+      working-directory: ./TrackMyStuffApp/track_my_stuff_api
+    
     - name: Run tests
       run: cargo test --verbose
+      working-directory: ./TrackMyStuffApp/track_my_stuff_api
