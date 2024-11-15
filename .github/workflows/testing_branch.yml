@@ -61,3 +61,22 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
         working-directory: ./TrackMyStuffApp/track_my_stuff_api
+
+      - name: Automatic Pull Request
+        uses: devops-infra/action-pull-request@v0.5.5
+        with:
+          github_token: ${{ secrets.APP_TOKEN }}
+          source_branch: testing
+          target_branch: staging
+          title: Automatic pull request from testing branch to staging branch
+          template: .github/PULL_REQUEST_TEMPLATE.md
+          body: "**Automated pull request**"
+          reviewer: harrysibbenga
+          assignee: harrysibbenga
+          label: testing
+          draft: true
+          old_string: "**Automated pull request from testing branch**"
+          new_string: "** Automatic pull request**"
+          get_diff: true
+          ignore_users: "dependabot"
+          allow_no_diff: false
