@@ -46,10 +46,10 @@ jobs:
         with:
           postgres-version: '16'
           database: ${{ secrets.POSTGRES_DB }}
-          user: ${{ secrets.POSTGRES_USER }}
+          username: ${{ secrets.POSTGRES_USER }}
           password: ${{ secrets.POSTGRES_PASSWORD }}
           port: 5432
-          ssl: false
+          ssl: true
           
       - name: Build
         run: cargo build --verbose
