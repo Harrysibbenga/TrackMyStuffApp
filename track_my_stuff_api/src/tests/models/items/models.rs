@@ -65,6 +65,7 @@ mod item_model_tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_get_item_by_id() {
         let connection = &mut establish_test_connection();
 

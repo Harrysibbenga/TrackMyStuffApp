@@ -1,3 +1,4 @@
+# This is a GitHub Actions workflow file for Rust CI/CD
 name: Rust CI/CD
 
 on:
@@ -62,3 +63,19 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
         working-directory: ./TrackMyStuffApp/track_my_stuff_api
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.APP_TOKEN }}
+          commit-message: "chore: Merge testing into staging"
+          title: "Merge testing into staging"
+          body: |
+            This pull request merges the changes from the testing branch into the staging branch.
+
+            View the changelog for a detailed list of changes:
+
+            ${{ steps.changelog.outputs.changelog_url }}
+
+          branch: "testing-to-staging" # The name of the new branch
+          base: "staging" # The target branch for the pull request
