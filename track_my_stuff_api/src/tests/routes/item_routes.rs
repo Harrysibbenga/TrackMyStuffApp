@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 use crate::models::items::models::{CreateItem, Item, UpdateItem};
 use crate::models::items::routes;
 use actix_web::{test, web, App};
@@ -15,6 +16,7 @@ async fn database_setup() -> Pool<ConnectionManager<PgConnection>> {
         .expect("Failed to create pool.")
 }
 
+#[allow(dead_code)]
 // Helper function to extract item ID from response
 async fn extract_item_id(
     resp: actix_web::dev::ServiceResponse<impl actix_web::body::MessageBody>,
@@ -24,6 +26,7 @@ async fn extract_item_id(
     item.id
 }
 
+#[allow(dead_code)]
 async fn init_test_app() -> (
     impl actix_web::dev::Service<
         actix_http::Request,

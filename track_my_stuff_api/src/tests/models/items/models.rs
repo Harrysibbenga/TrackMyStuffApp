@@ -65,10 +65,22 @@ mod item_model_tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_get_item_by_id() {
         let connection = &mut establish_test_connection();
-        let item = get_item_by_id(connection, 2).unwrap();
-        assert_eq!(item.id, 2);
+
+        let new_item = CreateItem {
+            name: "New Test Item".to_string(),
+            description: Some("This is a new test item".to_string()),
+            expected_arrival_date: Some(NaiveDateTime::from_timestamp(1_632_112_000, 0)),
+            item_received: Some(false),
+        };
+
+        let new_item: Item = create_item(connection, new_item).unwrap();
+
+        let item = get_item_by_id(connection, new_item.id).unwrap();
+
+        assert_eq!(item.id, new_item.id);
     }
 
     #[test]
@@ -82,7 +94,16 @@ mod item_model_tests {
             item_received: Some(true),
         };
 
-        let item = update_item(connection, 2, &updated_item).unwrap();
+        let new_item = CreateItem {
+            name: "New Test Item".to_string(),
+            description: Some("This is a new test item".to_string()),
+            expected_arrival_date: Some(NaiveDateTime::from_timestamp(1_632_112_000, 0)),
+            item_received: Some(false),
+        };
+
+        let new_item: Item = create_item(connection, new_item).unwrap();
+
+        let item = update_item(connection, new_item.id, &updated_item).unwrap();
 
         assert_eq!(item.name, "Updated Test Item");
         assert_eq!(
@@ -97,12 +118,21 @@ mod item_model_tests {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_delete_item() {
-        setup_env();
-
         let connection = &mut establish_test_connection();
-        delete_item(connection, 6).unwrap();
-        let result = get_item_by_id(connection, 6);
+
+        let new_item = CreateItem {
+            name: "New Test Item".to_string(),
+            description: Some("This is a new test item".to_string()),
+            expected_arrival_date: Some(NaiveDateTime::from_timestamp(1_632_112_000, 0)),
+            item_received: Some(false),
+        };
+
+        let new_item: Item = create_item(connection, new_item).unwrap();
+
+        delete_item(connection, new_item.id).unwrap();
+        let result = get_item_by_id(connection, new_item.id);
         assert!(result.is_err());
     }
 

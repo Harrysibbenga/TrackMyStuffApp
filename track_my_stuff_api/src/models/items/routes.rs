@@ -3,7 +3,6 @@ use super::models::{CreateItem, UpdateItem};
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 use diesel::r2d2::{ConnectionManager, Pool};
 use diesel::PgConnection;
-use std::io::Write;
 
 pub fn item_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create_item_handler)
