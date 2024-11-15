@@ -3,7 +3,6 @@ name: Rust CI/CD
 
 on:
   push:
-    branches: ["testing"]
     branches-ignore: ["main", "staging"]
 
 env:
